@@ -3,12 +3,13 @@ package com.example.android.quakereport;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
+import android.graphics.drawable.GradientDrawable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -76,6 +77,17 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         //Get the current earthquake magnitude and set in the magnitude text view.
         magnitudeTextView.setText(formattedMagnitude);
 
+
+        // Set the proper background color on the magnitude circle.
+        // Fetch the background from the TextView, which is a GradientDrawable.
+        GradientDrawable magnitudeCircle = (GradientDrawable) magnitudeTextView.getBackground();
+
+        // Get the appropriate background color based on the current earthquake magnitude
+        int magnitudeColor = getMagnitudeColor(currentEarthquakeData.getMagnitude());
+
+        // Set the color on the magnitude circle
+        magnitudeCircle.setColor(magnitudeColor);
+
         // Get the original location string from the Earthquake object,
         // which can be in the format of "5km N of Cairo, Egypt" or "Pacific-Antarctic Ridge".
         String originalLocation = currentEarthquakeData.getLocation();
@@ -125,7 +137,11 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         String formattedTime = formatTime(dateObject);
         timeTextView.setText(formattedTime);
 
-
         return convertView;
+    }
+
+    private int getMagnitudeColor(double magnitude){
+        int magnitude1Color = ContextCompat.getColor(getContext(), R.color.magnitude1);
+        return magnitude1Color;
     }
 }

@@ -2,4 +2,5 @@
 <resources>
     <dimen name="zero_dp">0dp</dimen>
     <dimen name="sixteen_dp">16dp</dimen>
+    <dimen name="thirty_six_dp">36dp</dimen>
 </resources>
