@@ -8,9 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.text.DecimalFormat;
 
 public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
@@ -23,11 +25,11 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
     /**
      * Create a new Earthquake Adapter object.
      *
-     * @param context is the current context (i.e. Activity) that the adapter is being created in.
-     * @param earthquake  is the list of earthquake to be displayed.
+     * @param context    is the current context (i.e. Activity) that the adapter is being created in.
+     * @param earthquake is the list of earthquake to be displayed.
      */
-    public EarthquakeAdapter(Context context , ArrayList<Earthquake> earthquake){
-        super(context , 0, earthquake);
+    public EarthquakeAdapter(Context context, ArrayList<Earthquake> earthquake) {
+        super(context, 0, earthquake);
     }
 
     /**
@@ -46,13 +48,23 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         return timeFormat.format(dateObject);
     }
 
+    /**
+     * Return the formatted magnitude string showing 1 decimal place (i.e. "3.2")
+     * from a decimal magnitude value.
+     */
+    private String formatMagnitude(double magnitude) {
+        DecimalFormat magnitudeFormat = new DecimalFormat("0.0");
+        return magnitudeFormat.format(magnitude);
+    }
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
+
         //Check if the existing view is being reused otherwise inflate the view.
-        if(convertView == null){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_items, parent ,false);
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_items, parent, false);
         }
 
         //Get the object located at the position.
@@ -60,8 +72,9 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
         //find the textview in the list item.
         TextView magnitudeTextView = convertView.findViewById(R.id.magnitude_text_view);
+        String formattedMagnitude = formatMagnitude(currentEarthquakeData.getMagnitude());
         //Get the current earthquake magnitude and set in the magnitude text view.
-        magnitudeTextView.setText(currentEarthquakeData.getMagnitude());
+        magnitudeTextView.setText(formattedMagnitude);
 
         // Get the original location string from the Earthquake object,
         // which can be in the format of "5km N of Cairo, Egypt" or "Pacific-Antarctic Ridge".
@@ -111,7 +124,6 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         TextView timeTextView = convertView.findViewById(R.id.time);
         String formattedTime = formatTime(dateObject);
         timeTextView.setText(formattedTime);
-
 
 
         return convertView;
