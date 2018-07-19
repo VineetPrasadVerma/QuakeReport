@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.text.DecimalFormat;
+import java.util.List;
 
 public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
@@ -28,10 +29,10 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
      * Create a new Earthquake Adapter object.
      *
      * @param context    is the current context (i.e. Activity) that the adapter is being created in.
-     * @param earthquake is the list of earthquake to be displayed.
+     * @param earthquakes is the list of earthquake to be displayed.
      */
-    public EarthquakeAdapter(Context context, ArrayList<Earthquake> earthquake) {
-        super(context, 0, earthquake);
+    public EarthquakeAdapter(Context context, List<Earthquake> earthquakes) {
+        super(context, 0, earthquakes);
     }
 
     /**
