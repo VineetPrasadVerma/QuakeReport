@@ -17,6 +17,8 @@ package com.example.android.quakereport;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -37,10 +39,14 @@ import java.util.List;
 
 public class EarthquakeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Earthquake>> {
 
-    /** TextView that is displayed when the list is empty */
+    /**
+     * TextView that is displayed when the list is empty
+     */
     private TextView mEmptyStateTextView;
 
-    /** Tag for log messages */
+    /**
+     * Tag for log messages
+     */
     private static final String LOG_TAG = EarthquakeLoader.class.getName();
 
     /**
@@ -78,9 +84,26 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         // so the list can be populated in the user interface
         earthquakeListView.setAdapter(mAdapter);
 
-        Log.i(LOG_TAG,"BEFORE INIT LOADER IS CALLED");
-        getLoaderManager().initLoader(EARTHQUAKE_LOADER_ID, null, this).forceLoad();
-        Log.i(LOG_TAG,"AFTER INIT LOADER IS CALLED");
+        // Get a reference to the ConnectivityManager to check state of network connectivity
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        // Get details on the currently active default data network
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        // If there is a network connection, fetch data
+        if (activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting()) {
+            getLoaderManager().initLoader(EARTHQUAKE_LOADER_ID, null, this).forceLoad();
+        }else{
+            // Otherwise, display error
+            // First, hide loading indicator so error message will be visible
+            ProgressBar loadingSpinner = findViewById(R.id.loading_spinner);
+            loadingSpinner.setVisibility(View.GONE);
+
+            // Update empty state with no connection error message
+            mEmptyStateTextView.setText(R.string.no_internet_connection);
+        }
 
         earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -99,13 +122,19 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     @Override
     public Loader<List<Earthquake>> onCreateLoader(int id, @Nullable Bundle args) {
         // Create a new loader for the given URL
-        Log.i(LOG_TAG,"IN ON CREATE LOADER");
+        Log.i(LOG_TAG, "IN ON CREATE LOADER");
         return new EarthquakeLoader(this, USGS_REQUEST_URL);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<List<Earthquake>> loader, List<Earthquake> data) {
-        Log.i(LOG_TAG,"IN ON LOAD FINISHED");
+
+        ProgressBar loadingSpinner = findViewById(R.id.loading_spinner);
+        loadingSpinner.setVisibility(View.GONE);
+
+        // Set empty state text to display "No earthquakes found."
+        mEmptyStateTextView.setText(R.string.no_earthquake_found);
+
         // Clear the adapter of previous earthquake data
         mAdapter.clear();
 
@@ -114,16 +143,11 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         if (data != null && !data.isEmpty()) {
             mAdapter.addAll(data);
         }
-
-        ProgressBar loadingSpinner = findViewById(R.id.loading_spinner);
-        loadingSpinner.setVisibility(View.GONE);
-        // Set empty state text to display "No earthquakes found."
-        mEmptyStateTextView.setText(R.string.no_earthquake_found);
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<List<Earthquake>> loader) {
-        Log.i(LOG_TAG,"IN ON LOAD RESET");
+        Log.i(LOG_TAG, "IN ON LOAD RESET");
         // Loader reset, so we can clear out our existing data.
         mAdapter.clear();
     }
