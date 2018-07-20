@@ -23,16 +23,24 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.app.LoaderManager;
 import android.content.Loader;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EarthquakeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Earthquake>> {
+
+    /** TextView that is displayed when the list is empty */
+    private TextView mEmptyStateTextView;
+
+    /** Tag for log messages */
+    private static final String LOG_TAG = EarthquakeLoader.class.getName();
 
     /**
      * Constant value for the earthquake loader ID. We can choose any integer.
@@ -57,7 +65,10 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         setContentView(R.layout.earthquake_activity);
 
         // Find a reference to the {@link ListView} in the layout
-        ListView earthquakeListView = (ListView) findViewById(R.id.list);
+        ListView earthquakeListView = findViewById(R.id.list);
+
+        mEmptyStateTextView = findViewById(R.id.empty_state_text_view);
+        earthquakeListView.setEmptyView(mEmptyStateTextView);
 
         // Create a new {@link ArrayAdapter} of earthquakes
         mAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
@@ -65,7 +76,10 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
         earthquakeListView.setAdapter(mAdapter);
+
+        Log.i(LOG_TAG,"BEFORE INIT LOADER IS CALLED");
         getLoaderManager().initLoader(EARTHQUAKE_LOADER_ID, null, this).forceLoad();
+        Log.i(LOG_TAG,"AFTER INIT LOADER IS CALLED");
 
         earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -84,11 +98,13 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     @Override
     public Loader<List<Earthquake>> onCreateLoader(int id, @Nullable Bundle args) {
         // Create a new loader for the given URL
+        Log.i(LOG_TAG,"IN ON CREATE LOADER");
         return new EarthquakeLoader(this, USGS_REQUEST_URL);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<List<Earthquake>> loader, List<Earthquake> data) {
+        Log.i(LOG_TAG,"IN ON LOAD FINISHED");
         // Clear the adapter of previous earthquake data
         mAdapter.clear();
 
@@ -97,10 +113,14 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         if (data != null && !data.isEmpty()) {
             mAdapter.addAll(data);
         }
+
+        // Set empty state text to display "No earthquakes found."
+        mEmptyStateTextView.setText(R.string.no_earthquake_found);
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<List<Earthquake>> loader) {
+        Log.i(LOG_TAG,"IN ON LOAD RESET");
         // Loader reset, so we can clear out our existing data.
         mAdapter.clear();
     }

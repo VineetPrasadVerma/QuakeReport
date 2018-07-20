@@ -3,6 +3,7 @@ package com.example.android.quakereport;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.content.AsyncTaskLoader;
+import android.util.Log;
 
 import java.util.List;
 
@@ -11,6 +12,9 @@ import java.util.List;
  * network request to the given URL.
  */
 public class EarthquakeLoader extends AsyncTaskLoader<List<Earthquake>> {
+
+    /** Tag for log messages */
+    private static final String LOG_TAG = EarthquakeLoader.class.getName();
 
     /** Query URL */
     private String mUrl;
@@ -28,6 +32,7 @@ public class EarthquakeLoader extends AsyncTaskLoader<List<Earthquake>> {
 
     @Override
     protected void onStartLoading() {
+        Log.i(LOG_TAG,"IN ON START LOADING");
         forceLoad();
     }
 
@@ -36,6 +41,7 @@ public class EarthquakeLoader extends AsyncTaskLoader<List<Earthquake>> {
      */
     @Override
     public List<Earthquake> loadInBackground() {
+        Log.i(LOG_TAG,"IN LOAD IN BACKGROUND");
         if (mUrl == null) {
             return null;
         }
