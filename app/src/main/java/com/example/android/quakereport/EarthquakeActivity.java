@@ -29,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.app.LoaderManager;
 import android.content.Loader;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -114,6 +115,8 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
             mAdapter.addAll(data);
         }
 
+        ProgressBar loadingSpinner = findViewById(R.id.loading_spinner);
+        loadingSpinner.setVisibility(View.GONE);
         // Set empty state text to display "No earthquakes found."
         mEmptyStateTextView.setText(R.string.no_earthquake_found);
     }
