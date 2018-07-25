@@ -73,7 +73,7 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         //Get the object located at the position.
         Earthquake currentEarthquakeData = getItem(position);
 
-        //find the textview in the list item.
+        //find the text view in the list item.
         TextView magnitudeTextView = convertView.findViewById(R.id.magnitude_text_view);
         String formattedMagnitude = formatMagnitude(currentEarthquakeData.getMagnitude());
         //Get the current earthquake magnitude and set in the magnitude text view.
