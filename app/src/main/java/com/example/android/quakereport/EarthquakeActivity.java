@@ -130,6 +130,11 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
+        String orderBy  = sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default)
+        );
+
         // getString retrieves a String value from the preferences. The second parameter is the default value for this preference.
         String minMagnitude = sharedPrefs.getString(
                 getString(R.string.settings_min_magnitude_key),
@@ -145,7 +150,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         uriBuilder.appendQueryParameter("format", "geojson");
         uriBuilder.appendQueryParameter("limit", "10");
         uriBuilder.appendQueryParameter("minmag", minMagnitude);
-        uriBuilder.appendQueryParameter("orderby", "time");
+        uriBuilder.appendQueryParameter("orderby", orderBy);
 
         // Return the completed uri `http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&limit=10&minmag=minMagnitude&orderby=time
         return new EarthquakeLoader(this, uriBuilder.toString());
